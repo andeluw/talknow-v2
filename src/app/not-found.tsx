@@ -1,6 +1,6 @@
+import { TriangleAlert } from 'lucide-react';
 import { Metadata } from 'next';
 import * as React from 'react';
-import { RiAlarmWarningFill } from 'react-icons/ri';
 
 import UnderlineLink from '@/components/links/UnderlineLink';
 
@@ -13,7 +13,7 @@ export default function NotFound() {
     <main>
       <section>
         <div className='layout flex min-h-screen flex-col items-center justify-center text-center'>
-          <RiAlarmWarningFill
+          <TriangleAlert
             size={60}
             className='drop-shadow-glow animate-flicker text-red-500'
           />

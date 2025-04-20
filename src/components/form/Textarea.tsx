@@ -38,10 +38,7 @@ export default function Textarea({
   return (
     <div className='w-full space-y-2'>
       {label && (
-        <Label
-          required={!!validation?.required}
-          labelTextClassName={labelTextClassName}
-        >
+        <Label required={!!validation?.required} className={labelTextClassName}>
           {label}
         </Label>
       )}

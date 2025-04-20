@@ -12,8 +12,7 @@ export default function SandboxForm() {
 
   const { handleSubmit } = methods;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = (data: any) => {
+  const onSubmit = () => {
     // console.log('Form data:', data);
   };
 

@@ -1,8 +1,6 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import { LucideIcon } from 'lucide-react';
+import { LoaderCircle, LucideIcon } from 'lucide-react';
 import * as React from 'react';
-import { IconType } from 'react-icons';
-import { ImSpinner2 } from 'react-icons/im';
 
 import { cn } from '@/lib/utils';
 
@@ -58,8 +56,8 @@ type ButtonProps = {
   isDarkBg?: boolean;
   variant?: ButtonVariant;
   size?: ButtonSize;
-  leftIcon?: IconType | LucideIcon;
-  rightIcon?: IconType | LucideIcon;
+  leftIcon?: LucideIcon;
+  rightIcon?: LucideIcon;
   classNames?: {
     leftIcon?: string;
     rightIcon?: string;
@@ -118,7 +116,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               }
             )}
           >
-            <ImSpinner2 className='animate-spin' />
+            <LoaderCircle className='animate-spin' />
           </div>
         )}
         {LeftIcon && (

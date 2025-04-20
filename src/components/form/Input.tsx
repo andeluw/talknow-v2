@@ -1,7 +1,6 @@
+import { Eye, EyeOff, LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { get, RegisterOptions, useFormContext } from 'react-hook-form';
-import { IconType } from 'react-icons';
-import { HiEye, HiEyeOff } from 'react-icons/hi';
 
 import { cn } from '@/lib/utils';
 
@@ -20,8 +19,8 @@ export type InputProps = {
   validation?: RegisterOptions;
   prefix?: string;
   suffix?: string;
-  rightIcon?: IconType;
-  leftIcon?: IconType;
+  rightIcon?: LucideIcon;
+  leftIcon?: LucideIcon;
   rightIconClassName?: string;
   leftIconClassName?: string;
   labelTextClasname?: string;
@@ -59,7 +58,7 @@ export default function Input({
       {label && (
         <Label
           required={validation?.required ? true : false}
-          labelTextClassName={labelTextClassName}
+          className={labelTextClassName}
         >
           {label}
         </Label>
@@ -149,7 +148,7 @@ export default function Input({
               )}
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <HiEye /> : <HiEyeOff />}
+              {showPassword ? <Eye /> : <EyeOff />}
             </div>
           )}
         </div>

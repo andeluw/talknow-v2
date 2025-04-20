@@ -207,14 +207,14 @@ export default function ComponentPage() {
                 </ButtonLink>
                 <ButtonLink
                   variant='outline'
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                   href='https://theodorusclarence.com'
                 >
                   Outline Variant
                 </ButtonLink>
                 <ButtonLink
                   variant='ghost'
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                   href='https://theodorusclarence.com'
                 >
                   Ghost Variant
@@ -237,10 +237,16 @@ export default function ComponentPage() {
               </p>
               <div className='flex flex-wrap gap-2'>
                 <Button variant='primary'>Primary Variant</Button>
-                <Button variant='outline' isDarkBg={mode === 'dark'}>
+                <Button
+                  variant='outline'
+                  //  isDarkBg={mode === 'dark'}
+                >
                   Outline Variant
                 </Button>
-                <Button variant='ghost' isDarkBg={mode === 'dark'}>
+                <Button
+                  variant='ghost'
+                  // isDarkBg={mode === 'dark'}
+                >
                   Ghost Variant
                 </Button>
                 <Button variant='dark'>Dark Variant</Button>
@@ -258,7 +264,7 @@ export default function ComponentPage() {
                   variant='outline'
                   leftIcon={Plus}
                   rightIcon={ArrowRight}
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                 >
                   Icon
                 </Button>
@@ -266,7 +272,7 @@ export default function ComponentPage() {
                   variant='ghost'
                   leftIcon={Plus}
                   rightIcon={ArrowRight}
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                 >
                   Icon
                 </Button>
@@ -281,10 +287,18 @@ export default function ComponentPage() {
                 <Button size='sm' variant='primary'>
                   Small Size
                 </Button>
-                <Button size='sm' variant='outline' isDarkBg={mode === 'dark'}>
+                <Button
+                  size='sm'
+                  variant='outline'
+                  // isDarkBg={mode === 'dark'}
+                >
                   Small Size
                 </Button>
-                <Button size='sm' variant='ghost' isDarkBg={mode === 'dark'}>
+                <Button
+                  size='sm'
+                  variant='ghost'
+                  // isDarkBg={mode === 'dark'}
+                >
                   Small Size
                 </Button>
                 <Button size='sm' variant='dark'>
@@ -308,7 +322,7 @@ export default function ComponentPage() {
                   variant='outline'
                   leftIcon={Plus}
                   rightIcon={ArrowRight}
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                 >
                   Icon
                 </Button>
@@ -317,7 +331,7 @@ export default function ComponentPage() {
                   variant='ghost'
                   leftIcon={Plus}
                   rightIcon={ArrowRight}
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                 >
                   Icon
                 </Button>
@@ -344,10 +358,18 @@ export default function ComponentPage() {
                 <Button disabled variant='primary'>
                   Disabled
                 </Button>
-                <Button disabled variant='outline' isDarkBg={mode === 'dark'}>
+                <Button
+                  disabled
+                  variant='outline'
+                  // isDarkBg={mode === 'dark'}
+                >
                   Disabled
                 </Button>
-                <Button disabled variant='ghost' isDarkBg={mode === 'dark'}>
+                <Button
+                  disabled
+                  variant='ghost'
+                  // isDarkBg={mode === 'dark'}
+                >
                   Disabled
                 </Button>
                 <Button disabled variant='dark'>
@@ -361,10 +383,18 @@ export default function ComponentPage() {
                 <Button isLoading variant='primary'>
                   Disabled
                 </Button>
-                <Button isLoading variant='outline' isDarkBg={mode === 'dark'}>
+                <Button
+                  isLoading
+                  variant='outline'
+                  // isDarkBg={mode === 'dark'}
+                >
                   Disabled
                 </Button>
-                <Button isLoading variant='ghost' isDarkBg={mode === 'dark'}>
+                <Button
+                  isLoading
+                  variant='ghost'
+                  //  isDarkBg={mode === 'dark'}
+                >
                   Disabled
                 </Button>
                 <Button isLoading variant='dark'>

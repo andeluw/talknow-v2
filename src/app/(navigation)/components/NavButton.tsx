@@ -1,5 +1,4 @@
 import { LucideIcon } from 'lucide-react';
-import { IconType } from 'react-icons';
 
 import { cn } from '@/lib/utils';
 
@@ -9,7 +8,7 @@ import useNavStore from '@/stores/useNavStore';
 
 interface NavButtonProps {
   name: string;
-  icon?: IconType | LucideIcon;
+  icon?: LucideIcon;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 

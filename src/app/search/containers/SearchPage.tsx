@@ -7,14 +7,12 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 
 import Input from '@/components/form/Input';
-import withAuth from '@/components/hoc/withAuth';
 
 import PostItem from '@/app/post/components/PostItem';
 import useSearchPost from '@/app/search/hooks/useSearchPost';
 import MainLayout from '@/layouts/MainLayout';
 
-export default withAuth(SearchPage, 'optional');
-function SearchPage() {
+export default function SearchPage() {
   const methods = useForm<{ search: string }>();
   const search = methods.watch('search');
   const { ref, inView } = useInView();

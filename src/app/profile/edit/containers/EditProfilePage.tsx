@@ -65,7 +65,7 @@ function EditProfilePage() {
             id='name'
             label='Name'
             placeholder='Enter your name'
-            value={user?.name}
+            defaultValue={user?.name ?? ''}
             onChange={(e) => setValue('name', e.target.value)}
           />
           <Input
@@ -84,7 +84,7 @@ function EditProfilePage() {
             label='Bio'
             placeholder='Enter your bio'
             rows={4}
-            value={user?.bio ?? ''}
+            defaultValue={user?.bio ?? ''}
             onChange={(e) => setValue('bio', e.target.value)}
           />
           <Button

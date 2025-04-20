@@ -1,12 +1,15 @@
 import { cn } from '@/lib/utils';
 
+import UnstyledLink from '@/components/links/UnstyledLink';
 import NextImage from '@/components/NextImage';
 
 export default function ProfileImage({
   path,
   className,
+  username,
 }: {
   path: string | null;
+  username?: string | null;
   className?: string;
 }) {
   // const { data, isLoading } = useQuery<any, any>({
@@ -28,7 +31,8 @@ export default function ProfileImage({
       ? 'https://tugas2-fe.labse.id/assets/' + path
       : '/images/default-avatar.png';
   return (
-    <div
+    <UnstyledLink
+      href={username ? `/profile/${username}` : '#'}
       className={cn(
         'h-8 w-8 md:w-12 md:h-12 relative rounded-full overflow-hidden mt-0.5',
         className
@@ -43,6 +47,6 @@ export default function ProfileImage({
         }}
         className='rounded-full'
       />
-    </div>
+    </UnstyledLink>
   );
 }

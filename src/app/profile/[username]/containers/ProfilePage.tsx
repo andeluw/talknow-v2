@@ -10,7 +10,7 @@ import Typography from '@/components/Typography';
 import useAuthStore from '@/stores/useAuthStore';
 
 import PostItem from '@/app/post/components/PostItem';
-import ProfileHeaderSkeleton from '@/app/profile/[username]/containers/ProfileHeaderSkeleton';
+import ProfileHeaderSkeleton from '@/app/profile/[username]/components/ProfileHeaderSkeleton';
 import useGetUser from '@/app/profile/[username]/hooks/useGetUser';
 import useGetUserPosts from '@/app/profile/[username]/hooks/useGetUserPosts';
 import ProfileImage from '@/app/profile/components/ProfileImage';

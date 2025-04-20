@@ -25,7 +25,7 @@ export const useUnlikePostMutation = ({
       return await api.delete<ApiResponse<null>>(`/likes/${post_id}`);
     },
     onSuccess: (_, variables) => {
-      toast.success('Post unliked.');
+      // toast.success('Post unliked.');
       setLiked(false);
       if (setTotalLikes) {
         setTotalLikes((prev) => prev - 1);

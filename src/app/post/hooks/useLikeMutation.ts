@@ -24,7 +24,7 @@ export const useLikePostMutation = ({
       return await api.put<ApiResponse<null>>(`/likes/${post_id}`);
     },
     onSuccess: (_, variables) => {
-      toast.success('Post liked!');
+      // toast.success('Post liked!');
       setLiked(true);
       if (setTotalLikes) {
         setTotalLikes((prev) => prev + 1);

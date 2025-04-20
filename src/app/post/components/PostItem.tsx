@@ -131,9 +131,12 @@ export default function PostItem(props: PostItemProps) {
     if (!post) return null;
 
     return isMainDetail ? (
-      <div className='flex gap-3 md:gap-4 flex-col'>
+      <div className='flex gap-3 md:gap-4 flex-col w-full'>
         <div className='flex gap-3 md:gap-4 items-center'>
-          <ProfileImage path={post.user?.image_url} />
+          <ProfileImage
+            path={post.user?.image_url}
+            username={post.user?.username}
+          />
           <UnstyledLink
             href={`/profile/${post.user?.username}`}
             className='text-primary font-semibold text-base md:text-xl'
@@ -141,7 +144,7 @@ export default function PostItem(props: PostItemProps) {
             @{post.user?.username}
           </UnstyledLink>
         </div>
-        <PostText text={post.text} isMainDetail />
+        <PostText text={post.text} postId={post.id} isMainDetail />
         <Button
           variant='outline-2'
           size='sm'
@@ -185,16 +188,20 @@ export default function PostItem(props: PostItemProps) {
         )}
       </div>
     ) : (
-      <div className='flex gap-4 md:gap-6'>
-        <ProfileImage path={post.user?.image_url} />
-        <div className='flex flex-col max-w-[80%]'>
+      <div className='flex gap-4 md:gap-6 w-full'>
+        <ProfileImage
+          path={post.user?.image_url}
+          username={post.user?.username}
+          className='flex-shrink-0'
+        />
+        <div className='flex flex-col w-full'>
           <UnstyledLink
             href={`/profile/${post.user?.username}`}
             className='text-primary font-semibold'
           >
             @{post.user?.username}
           </UnstyledLink>
-          <PostText text={post.text} />
+          <PostText text={post.text} postId={post.id} />
           <div className='flex gap-2 mt-4'>
             <Button
               variant='outline-2'

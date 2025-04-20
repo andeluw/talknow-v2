@@ -12,7 +12,7 @@ import Typography from '@/components/Typography';
 import { useLoginMutation } from '@/app/(auth)/login/hooks/useLoginMutation';
 import { loginSchema } from '@/validations/login';
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const methods = useForm({
     mode: 'onTouched',
     resolver: zodResolver(loginSchema),
@@ -27,12 +27,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <section className='min-h-screen flex flex-col items-center justify-center'>
+    <section className='h-screen flex flex-col items-center justify-center'>
       <Typography
         as='h1'
         variant='h5'
         weight='bold'
-        className='text-primary-500 text-center mb-4 max-[350px]:mb-2 text-[120px]'
+        className='text-primary-500 text-center mb-4 max-[350px]:mb-2'
       >
         tn.
       </Typography>

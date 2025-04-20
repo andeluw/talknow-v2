@@ -38,7 +38,7 @@ function EditProfilePage() {
   };
 
   return (
-    <section className='min-h-screen flex flex-col items-center justify-center'>
+    <section className='h-screen flex flex-col items-center justify-center'>
       <Typography
         as='h1'
         variant='h5'

@@ -1,5 +1,8 @@
+'use client';
 import { EllipsisVertical } from 'lucide-react';
 import { useState } from 'react';
+
+import { copyToClipboard } from '@/lib/helper';
 
 import IconButton from '@/components/buttons/IconButton';
 import {
@@ -9,15 +12,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/dropdown/DropdownMenu';
 
+import useAuthStore from '@/stores/useAuthStore';
+
 import DeletePostModal from '@/app/post/components/DeletePostModal';
 import EditPostModal from '@/app/post/components/EditPostModal';
 
 type MoreButtonProps = {
   postId: number;
   currentText: string;
+  username?: string;
 };
 
-export default function MoreButton({ postId, currentText }: MoreButtonProps) {
+export default function MoreButton({
+  postId,
+  currentText,
+  username,
+}: MoreButtonProps) {
+  const user = useAuthStore.useUser();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
 
@@ -35,7 +46,6 @@ export default function MoreButton({ postId, currentText }: MoreButtonProps) {
     }
     setDeleteModalOpen(false);
   }
-
   const openEditModal = (event?: React.MouseEvent | Event) => {
     if (event) {
       event.preventDefault?.();
@@ -68,19 +78,34 @@ export default function MoreButton({ postId, currentText }: MoreButtonProps) {
         <DropdownMenuContent>
           <DropdownMenuItem
             className='group cursor-pointer'
-            onClick={openEditModal}
+            onClick={() =>
+              copyToClipboard({
+                text: `https://talknow-rpl-v2.vercel.app/post/${postId}`,
+              })
+            }
           >
-            <span className='group-hover:font-semibold'>Edit</span>
+            <span className='group-hover:font-semibold'>Share</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            className='group cursor-pointer'
-            onClick={openDeleteModal}
-          >
-            <span className='text-red-500 group-hover:font-semibold group-hover:text-red-600'>
-              Delete
-            </span>
-          </DropdownMenuItem>
+          {user?.username === username && (
+            <>
+              <DropdownMenuItem
+                className='group cursor-pointer'
+                onClick={openEditModal}
+              >
+                <span className='group-hover:font-semibold'>Edit</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                className='group cursor-pointer'
+                onClick={openDeleteModal}
+              >
+                <span className='text-red-500 group-hover:font-semibold group-hover:text-red-600'>
+                  Delete
+                </span>
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

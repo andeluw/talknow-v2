@@ -4,6 +4,9 @@ import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
+import { copyToClipboard } from '@/lib/helper';
+
+import Button from '@/components/buttons/Button';
 import ButtonLink from '@/components/links/ButtonLink';
 import Typography from '@/components/Typography';
 
@@ -69,11 +72,23 @@ export default function ProfilePage() {
           <Typography variant='bt' className='font-medium mt-2 text-center'>
             {fetchedUser?.bio?.trim()}
           </Typography>
-          {fetchedUser?.username === user?.username && (
-            <ButtonLink href='/profile/edit' variant='light' className='mt-8'>
-              Edit Profile
-            </ButtonLink>
-          )}
+          <div className='flex gap-2 mt-8'>
+            {fetchedUser?.username === user?.username && (
+              <ButtonLink href='/profile/edit' variant='light'>
+                Edit Profile
+              </ButtonLink>
+            )}
+            <Button
+              variant='outline-2'
+              onClick={() =>
+                copyToClipboard({
+                  text: `https://talknow-rpl-v2.vercel.app/profile/${fetchedUser?.username}`,
+                })
+              }
+            >
+              Share Profile
+            </Button>
+          </div>
         </div>
       )}
 

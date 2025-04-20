@@ -254,9 +254,11 @@ export default function PostItem(props: PostItemProps) {
     return (
       <UnstyledLink href={`/post/${post.id}`} className={WrapperClasses}>
         {PostContent()}
-        {post.user?.id === user?.id && (
-          <MoreButton postId={post.id} currentText={post.text} />
-        )}
+        <MoreButton
+          username={post.user?.username}
+          postId={post.id}
+          currentText={post.text}
+        />
       </UnstyledLink>
     );
   }
@@ -264,9 +266,11 @@ export default function PostItem(props: PostItemProps) {
   return (
     <div className={WrapperClasses}>
       {PostContent()}
-      {post.user?.id === user?.id && (
-        <MoreButton postId={post.id} currentText={post.text} />
-      )}
+      <MoreButton
+        username={post.user?.username}
+        postId={post.id}
+        currentText={post.text}
+      />
       {/* {isReplyModalOpen && (
         <ReplyPostModal
           parent_id={post.id}

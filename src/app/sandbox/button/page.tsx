@@ -20,112 +20,22 @@ import PrimaryLink from '@/components/links/PrimaryLink';
 import UnderlineLink from '@/components/links/UnderlineLink';
 import UnstyledLink from '@/components/links/UnstyledLink';
 import NextImage from '@/components/NextImage';
-import Skeleton from '@/components/Skeleton';
-
-type Color = (typeof colorList)[number];
+import { Skeleton } from '@/components/Skeleton';
 
 export default function ComponentPage() {
-  const [mode, setMode] = React.useState<'dark' | 'light'>('light');
-  const [color, setColor] = React.useState<Color>('sky');
-  function toggleMode() {
-    return mode === 'dark' ? setMode('light') : setMode('dark');
-  }
-
-  const textColor = mode === 'dark' ? 'text-gray-300' : 'text-gray-600';
+  const [mode] = React.useState<'dark' | 'light'>('dark');
+  const textColor = clsx('text-muted-foreground');
 
   return (
     <main>
-      <section
-        className={clsx(mode === 'dark' ? 'bg-dark' : 'bg-white', color)}
-      >
-        <div
-          className={clsx(
-            'layout min-h-screen py-20',
-            mode === 'dark' ? 'text-white' : 'text-black'
-          )}
-        >
-          <h1>Built-in Components</h1>
+      <section>
+        <div className={clsx('layout min-h-screen py-20')}>
+          <h1>Button</h1>
           <ArrowLink direction='left' className='mt-2' href='/'>
             Back to Home
           </ArrowLink>
 
-          <div className='mt-8 flex flex-wrap gap-2'>
-            <Button
-              onClick={toggleMode}
-              variant={mode === 'dark' ? 'light' : 'dark'}
-            >
-              Set to {mode === 'dark' ? 'light' : 'dark'}
-            </Button>
-            {/* <Button onClick={randomize}>Randomize CSS Variable</Button> */}
-          </div>
-
           <ol className='mt-8 space-y-6'>
-            <li className='space-y-2'>
-              <h2 className='text-lg md:text-xl'>Customize Colors</h2>
-              <p className={clsx('!mt-1 text-sm', textColor)}>
-                You can change primary color to any Tailwind CSS colors. See
-                globals.css to change your color.
-              </p>
-              <div className='flex flex-wrap gap-2'>
-                <select
-                  name='color'
-                  id='color'
-                  value={color}
-                  className={clsx(
-                    'block max-w-xs rounded',
-                    mode === 'dark'
-                      ? 'bg-dark border border-gray-600'
-                      : 'border-gray-300 bg-white',
-                    'focus:border-primary-400 focus:ring-primary-400 focus:outline-none focus:ring'
-                  )}
-                  onChange={(e) => setColor(e.target.value as Color)}
-                >
-                  {colorList.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                <ButtonLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/blob/main/src/styles/colors.css'>
-                  Check list of colors
-                </ButtonLink>
-              </div>
-              <div className='flex flex-wrap gap-2 text-xs font-medium'>
-                <div className='bg-primary-50 flex h-10 w-10 items-center justify-center rounded text-black'>
-                  50
-                </div>
-                <div className='bg-primary-100 flex h-10 w-10 items-center justify-center rounded text-black'>
-                  100
-                </div>
-                <div className='bg-primary-200 flex h-10 w-10 items-center justify-center rounded text-black'>
-                  200
-                </div>
-                <div className='bg-primary-300 flex h-10 w-10 items-center justify-center rounded text-black'>
-                  300
-                </div>
-                <div className='bg-primary-400 flex h-10 w-10 items-center justify-center rounded text-black'>
-                  400
-                </div>
-                <div className='bg-primary-500 flex h-10 w-10 items-center justify-center rounded text-black'>
-                  500
-                </div>
-                <div className='bg-primary-600 flex h-10 w-10 items-center justify-center rounded text-white'>
-                  600
-                </div>
-                <div className='bg-primary-700 flex h-10 w-10 items-center justify-center rounded text-white'>
-                  700
-                </div>
-                <div className='bg-primary-800 flex h-10 w-10 items-center justify-center rounded text-white'>
-                  800
-                </div>
-                <div className='bg-primary-900 flex h-10 w-10 items-center justify-center rounded text-white'>
-                  900
-                </div>
-                <div className='bg-primary-950 flex h-10 w-10 items-center justify-center rounded text-white'>
-                  950
-                </div>
-              </div>
-            </li>
             <li className='space-y-2'>
               <h2 className='text-lg md:text-xl'>UnstyledLink</h2>
               <p className={clsx('!mt-1 text-sm', textColor)}>
@@ -207,14 +117,14 @@ export default function ComponentPage() {
                 </ButtonLink>
                 <ButtonLink
                   variant='outline'
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                   href='https://theodorusclarence.com'
                 >
                   Outline Variant
                 </ButtonLink>
                 <ButtonLink
                   variant='ghost'
-                  isDarkBg={mode === 'dark'}
+                  // isDarkBg={mode === 'dark'}
                   href='https://theodorusclarence.com'
                 >
                   Ghost Variant
@@ -245,6 +155,16 @@ export default function ComponentPage() {
                 </Button>
                 <Button variant='dark'>Dark Variant</Button>
                 <Button variant='light'>Light Variant</Button>
+              </div>
+              <div className='flex flex-wrap gap-2'>
+                <Button variant='shadcn'>Shadcn Variant</Button>
+                <Button variant='default'>Default Variant</Button>
+                <Button variant='outline-white'>Outline White Variant</Button>
+                <Button variant='ghost-white'>Ghost White Variant</Button>
+                <Button variant='destructive'>Destructive Variant</Button>
+
+                <Button variant='secondary'>Secondary Variant</Button>
+                <Button variant='link'>Link Variant</Button>
               </div>
               <div className='flex flex-wrap gap-2'>
                 <Button

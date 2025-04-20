@@ -14,6 +14,7 @@ const IconLinkVariant = [
   'ghost',
   'light',
   'dark',
+  'transparent',
 ] as const;
 
 type IconLinkProps = {
@@ -23,6 +24,9 @@ type IconLinkProps = {
   classNames?: {
     icon?: string;
   };
+  iconSize?: string | number;
+  isIconFilled?: boolean;
+  filledIcon?: string;
 } & Omit<UnstyledLinkProps, 'children'>;
 
 const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
@@ -33,6 +37,9 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
       variant = 'outline',
       isDarkBg = false,
       classNames,
+      iconSize = '1em',
+      isIconFilled = false,
+      filledIcon = 'white',
       ...rest
     },
     ref
@@ -43,7 +50,6 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
         type='button'
         className={cn(
           'inline-flex items-center justify-center rounded font-medium',
-          'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
           'shadow-sm',
           'transition-colors duration-75',
           'min-h-[28px] min-w-[28px] p-1 md:min-h-[34px] md:min-w-[34px] md:p-2',
@@ -55,6 +61,7 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
               'hover:bg-primary-600 hover:text-white',
               'active:bg-primary-700',
               'disabled:bg-primary-700',
+              'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
             ],
             variant === 'outline' && [
               'text-primary-500',
@@ -81,6 +88,12 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
               'border border-gray-600',
               'hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-700',
             ],
+            variant === 'transparent' && [
+              'bg-transparent text-[#4d4d4d]',
+              'hover:text-foreground hover:bg-primary-foreground',
+              'active:bg-muted disabled:bg-muted',
+              'focus:outline-none ring-0',
+            ],
           ],
           //#endregion  //*======== Variants ===========
           'disabled:cursor-not-allowed',
@@ -88,7 +101,14 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
         )}
         {...rest}
       >
-        {Icon && <Icon size='1em' className={cn(classNames?.icon)} />}
+        {Icon && (
+          <Icon
+            size={iconSize}
+            className={cn(classNames?.icon)}
+            fill={isIconFilled ? filledIcon : ''}
+            strokeWidth={isIconFilled ? 3 : 2.75}
+          />
+        )}
       </UnstyledLink>
     );
   }

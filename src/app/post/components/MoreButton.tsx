@@ -21,12 +21,14 @@ type MoreButtonProps = {
   postId: number;
   currentText: string;
   username?: string;
+  parent_id: number | null;
 };
 
 export default function MoreButton({
   postId,
   currentText,
   username,
+  parent_id,
 }: MoreButtonProps) {
   const user = useAuthStore.useUser();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -71,7 +73,6 @@ export default function MoreButton({
             variant='transparent'
             className='w-8 h-8 p-2 hover:bg-surface-muted text-primary'
             iconSize={24}
-            onClick={(e) => e.stopPropagation()}
           />
         </DropdownMenuTrigger>
 
@@ -123,6 +124,8 @@ export default function MoreButton({
           open={isDeleteModalOpen}
           onClose={closeDeleteModal}
           postId={postId}
+          parent_id={parent_id}
+          username={username ? username : null}
         />
       )}
     </>

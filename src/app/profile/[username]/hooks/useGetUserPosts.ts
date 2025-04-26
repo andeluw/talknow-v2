@@ -12,10 +12,10 @@ export default function useGetUserPosts({ username }: { username: string }) {
     hasNextPage,
     fetchNextPage,
     isLoading,
-    isError,
+    error,
     refetch: refetchPosts,
   } = useInfiniteQuery({
-    queryKey: ['posts', 'infinite', 'user', username],
+    queryKey: ['posts', 'user', username],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await api.get<PaginatedApiResponse<Post[]>>(
         `/user/${username}/posts`,
@@ -37,9 +37,6 @@ export default function useGetUserPosts({ username }: { username: string }) {
       return nextPage;
     },
     initialPageParam: 1,
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
   });
 
   return {
@@ -48,7 +45,7 @@ export default function useGetUserPosts({ username }: { username: string }) {
     hasNextPage,
     fetchNextPage,
     isLoading,
-    isError,
+    error,
     refetchPosts,
   };
 }

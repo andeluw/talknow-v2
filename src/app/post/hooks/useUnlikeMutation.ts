@@ -8,13 +8,9 @@ import { getFromLocalStorage } from '@/lib/helper';
 import { ApiError, ApiResponse } from '@/types/api';
 
 export const useUnlikePostMutation = ({
-  setLiked,
   username,
-  setTotalLikes,
 }: {
-  setLiked: React.Dispatch<React.SetStateAction<boolean>>;
   username: string | null;
-  setTotalLikes?: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const { mutate, isPending } = useMutation<
     AxiosResponse<ApiResponse<null>>,
@@ -26,11 +22,6 @@ export const useUnlikePostMutation = ({
     },
     onSuccess: (_, variables) => {
       // toast.success('Post unliked.');
-      setLiked(false);
-      if (setTotalLikes) {
-        setTotalLikes((prev) => prev - 1);
-      }
-
       if (username === null) {
         toast.error('User is not logged in.');
         return;

@@ -12,10 +12,10 @@ export default function useGetDetailPost({ id }: { id: number }) {
     hasNextPage,
     fetchNextPage,
     isLoading,
-    isError,
+    error,
     refetch: refetchPosts,
   } = useInfiniteQuery({
-    queryKey: ['posts', 'infinite', id],
+    queryKey: ['posts', 'detail', id],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await api.get<PaginatedApiResponse<PostWithReplies>>(
         `/post/${id}`,
@@ -35,10 +35,6 @@ export default function useGetDetailPost({ id }: { id: number }) {
         : undefined;
     },
     initialPageParam: 1,
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    // cacheTime: 0,           // (optional) disable caching completely
   });
 
   return {
@@ -47,7 +43,7 @@ export default function useGetDetailPost({ id }: { id: number }) {
     hasNextPage,
     fetchNextPage,
     isLoading,
-    isError,
+    error,
     refetchPosts,
   };
 }

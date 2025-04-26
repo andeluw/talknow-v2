@@ -1,11 +1,12 @@
 'use client';
 import { ArrowLeft, Loader } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import IconLink from '@/components/links/IconLink';
+import IconButton from '@/components/buttons/IconButton';
 
+import NotFound from '@/app/not-found';
 import useGetDetailPost from '@/app/post/[id]/hooks/useGetDetailPost';
 import PostItem from '@/app/post/components/PostItem';
 import MainLayout from '@/layouts/MainLayout';
@@ -13,6 +14,7 @@ import MainLayout from '@/layouts/MainLayout';
 import { User } from '@/types/entities/user';
 
 export default function PostDetailPage() {
+  const router = useRouter();
   const { id } = useParams();
   const { ref, inView } = useInView();
   const {
@@ -21,7 +23,7 @@ export default function PostDetailPage() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    refetchPosts,
+    error,
   } = useGetDetailPost({ id: Number(id) });
 
   useEffect(() => {
@@ -30,14 +32,22 @@ export default function PostDetailPage() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  if (
+    (error && 'status' in error && error.status === 400) ||
+    ((!posts || !posts.pages || posts.pages.length === 0) && !isLoading) ||
+    posts?.pages[0].data?.is_deleted
+  ) {
+    return <NotFound />;
+  }
+
   return (
     <MainLayout className='items-start'>
-      <IconLink
-        href='/'
+      <IconButton
         icon={ArrowLeft}
         variant='transparent'
         className='w-fit px-3 py-1.5 mb-4'
         iconSize={24}
+        onClick={() => router.back()}
       />
 
       {isLoading ? (
@@ -53,7 +63,6 @@ export default function PostDetailPage() {
             parent_id: posts?.pages[0].data.parent_id as number,
             is_deleted: posts?.pages[0].data.is_deleted as boolean,
           }}
-          refetchPosts={refetchPosts}
           isHomepage={true}
           topPost={true}
           isMainDetail={true}
@@ -71,7 +80,6 @@ export default function PostDetailPage() {
                 key={post.id}
                 post={post}
                 isHomepage={true}
-                refetchPosts={refetchPosts}
               />
             )
         )}
@@ -79,7 +87,7 @@ export default function PostDetailPage() {
       <div ref={ref} className='h-10'></div>
 
       {isFetchingNextPage && (
-        <Loader className='animate-spin text-muted-foreground mt-4' />
+        <Loader className='animate-spin text-muted-foreground mt-4 place-self-center' />
       )}
     </MainLayout>
   );

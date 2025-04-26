@@ -18,14 +18,8 @@ import MainLayout from '@/layouts/MainLayout';
 export default withAuth(Homepage, 'public');
 function Homepage() {
   const user = useAuthStore.useUser();
-  const {
-    posts,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    refetchPosts,
-  } = useGetAllPost();
+  const { posts, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useGetAllPost();
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -40,7 +34,7 @@ function Homepage() {
         <CreatePostModal>
           <div className='flex items-center gap-3 w-full rounded-t-xl border-[1.5px] border-b-0 border-surface-muted bg-surface-alt py-5 px-5 md:px-8'>
             <div className='flex items-center gap-6 w-full'>
-              <ProfileImage path={user.image_url} />
+              <ProfileImage path={user.image_url} username={user.username} />
               <Typography variant='p' className='text-muted-foreground'>
                 What's on your mind?
               </Typography>
@@ -64,7 +58,6 @@ function Homepage() {
                     key={post.id}
                     post={post}
                     // isLink={true}
-                    refetchPosts={refetchPosts}
                   />
                 )
             )}

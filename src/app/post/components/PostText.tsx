@@ -29,7 +29,7 @@ export default function PostText({
           variant={`${isMainDetail ? 'p' : 'bt'}`}
           className={cn(
             'text-primary mt-2 whitespace-pre-wrap',
-            !isExpanded && 'line-clamp-5'
+            !isExpanded && 'line-clamp-6'
           )}
         >
           {text}

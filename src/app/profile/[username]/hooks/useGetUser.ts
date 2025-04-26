@@ -9,7 +9,7 @@ export default function useGetUser({ username }: { username: string }) {
   const {
     data,
     isLoading,
-    isError,
+    error,
     refetch: refetchUser,
   } = useQuery({
     queryKey: ['user', username],
@@ -17,15 +17,12 @@ export default function useGetUser({ username }: { username: string }) {
       const res = await api.get<ApiResponse<User>>(`/user/${username}`);
       return res.data.data;
     },
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
   });
 
   return {
     fetchedUser: data,
     isLoading,
-    isError,
+    error,
     refetchUser,
   };
 }

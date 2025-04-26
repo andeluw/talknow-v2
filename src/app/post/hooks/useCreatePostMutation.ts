@@ -1,6 +1,5 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
@@ -8,11 +7,11 @@ import api from '@/lib/api';
 
 import { postSchema } from '@/validations/post';
 
-import { ApiError, ApiResponse } from '@/types/api';
+import { ApiError, ApiResponse, PaginatedApiResponse } from '@/types/api';
 import { Post } from '@/types/entities/post';
 
 export const useCreatePostMutation = () => {
-  const router = useRouter();
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation<
     ApiResponse<Post>,
     AxiosError<ApiError>,
@@ -22,12 +21,64 @@ export const useCreatePostMutation = () => {
       const res = await api.post<ApiResponse<Post>>('/post', data);
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success('Post created successfully!');
-      router.refresh();
+
+      //#region //*=========== Main ===========
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      queryClient.setQueryData(['posts'], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map(
+            (page: PaginatedApiResponse<Post[]>, index: number) =>
+              index === 0
+                ? {
+                    ...page,
+                    data: [
+                      { ...data.data },
+                      ...page.data.filter((post: Post) => !post.is_deleted),
+                    ],
+                  }
+                : page
+          ),
+        };
+      });
+      //#endregion  //*======== Main ===========
+
+      //#region //*=========== User Profile ===========
+      queryClient.setQueryData(
+        ['posts', 'user', data.data.user.username],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map(
+              (page: PaginatedApiResponse<Post[]>, index: number) =>
+                index === 0
+                  ? {
+                      ...page,
+                      data: [
+                        { ...data.data },
+                        ...page.data.filter((post: Post) => !post.is_deleted),
+                      ],
+                    }
+                  : page
+            ),
+          };
+        }
+      );
+      //#endregion  //*======== User Profile ===========
     },
     onError: (error) => {
       toast.error(error.response?.data.error || 'Something went wrong.');
+    },
+    onSettled: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({
+        queryKey: ['posts', 'user', data?.data.user.username],
+      });
     },
   });
 

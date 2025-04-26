@@ -15,12 +15,16 @@ export default function DeletePostModal({
   postId,
   open,
   onClose,
+  parent_id,
+  username,
 }: {
   postId: number;
   open: boolean;
   onClose: (event?: React.MouseEvent | Event) => void;
+  parent_id: number | null;
+  username: string | null;
 }) {
-  const { mutate, isPending } = useDeletePostMutation();
+  const { mutate, isPending } = useDeletePostMutation({ parent_id, username });
 
   return (
     <AlertDialog

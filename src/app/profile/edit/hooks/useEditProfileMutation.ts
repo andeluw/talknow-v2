@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -10,6 +10,7 @@ import { User } from '@/types/entities/user';
 
 export const useEditProfileMutation = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation<
     ApiResponse<User>,
     AxiosError<ApiError>,
@@ -34,10 +35,15 @@ export const useEditProfileMutation = () => {
       toast.success('Your changes have been saved.');
       setTimeout(() => {
         router.push(`/profile/${data.data.username}`);
-      }, 2000);
+      }, 1000);
     },
     onError: (error) => {
       toast.error(error.response?.data.error || 'Something went wrong.');
+    },
+    onSettled: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['user', data?.data.username],
+      });
     },
   });
 

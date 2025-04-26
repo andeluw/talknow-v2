@@ -19,7 +19,7 @@ export default function useSearchPost({
     isError,
     refetch: refetchPosts,
   } = useInfiniteQuery({
-    queryKey: ['posts', 'infinite', 'search', searchQuery],
+    queryKey: ['posts', 'search', searchQuery],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await api.get<PaginatedApiResponse<Post[]>>('/post', {
         params: {
@@ -39,9 +39,6 @@ export default function useSearchPost({
       return nextPage;
     },
     initialPageParam: 1,
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
   });
 
   return {

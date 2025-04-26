@@ -12,6 +12,8 @@ import Typography from '@/components/Typography';
 
 import useAuthStore from '@/stores/useAuthStore';
 
+import NotFound from '@/app/not-found';
+import CreatePostModal from '@/app/post/components/CreatePostModal';
 import PostItem from '@/app/post/components/PostItem';
 import ProfileHeaderSkeleton from '@/app/profile/[username]/components/ProfileHeaderSkeleton';
 import useGetUser from '@/app/profile/[username]/hooks/useGetUser';
@@ -22,7 +24,11 @@ import MainLayout from '@/layouts/MainLayout';
 export default function ProfilePage() {
   const user = useAuthStore.useUser();
   const { username } = useParams();
-  const { fetchedUser, isLoading: pendingUser } = useGetUser({
+  const {
+    fetchedUser,
+    isLoading: pendingUser,
+    error: errorGetUser,
+  } = useGetUser({
     username: username as string,
   });
 
@@ -32,7 +38,6 @@ export default function ProfilePage() {
     hasNextPage,
     isFetchingNextPage,
     isLoading: pendingPosts,
-    refetchPosts,
   } = useGetUserPosts({
     username: username as string,
   });
@@ -43,6 +48,21 @@ export default function ProfilePage() {
       fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const noPosts =
+    (!posts ||
+      !posts.pages ||
+      posts.pages.every(
+        (page) =>
+          !page.data ||
+          page.data.length === 0 ||
+          page.data.every((post) => post.is_deleted)
+      )) &&
+    !pendingPosts;
+
+  if (errorGetUser && 'status' in errorGetUser && errorGetUser.status === 400) {
+    return <NotFound />;
+  }
 
   return (
     <MainLayout>
@@ -55,11 +75,11 @@ export default function ProfilePage() {
         >
           <ProfileImage
             path={fetchedUser?.image_url as string | null}
-            className='w-16 h-16'
+            className='w-20 h-20 md:w-24 md:h-24'
           />
           <Typography
             variant='h5'
-            className='font-semibold text-primary md:text-2xl mt-2 text-center'
+            className='font-semibold text-primary md:text-2xl mt-4 text-center'
           >
             @{fetchedUser?.username}
           </Typography>
@@ -92,10 +112,29 @@ export default function ProfilePage() {
         </div>
       )}
 
+      {!noPosts && fetchedUser?.username === user?.username && (
+        <CreatePostModal>
+          <div className='flex items-center gap-3 w-full rounded-t-xl border-[1.5px] border-b-0 border-surface-muted bg-surface-alt py-5 px-5 md:px-8'>
+            <div className='flex items-center gap-6 w-full'>
+              <ProfileImage
+                path={user?.image_url as string | null}
+                username={user?.username}
+              />
+              <Typography variant='p' className='text-muted-foreground'>
+                What's on your mind?
+              </Typography>
+            </div>
+            <Button variant='light' size='base'>
+              Post
+            </Button>
+          </div>
+        </CreatePostModal>
+      )}
+
       {pendingPosts && !posts
         ? [...Array(3)].map((_, idx) => <PostItem key={idx} isLoading={true} />)
         : posts?.pages
-            .flatMap((page) => page.data)
+            .flatMap((page) => page.data ?? [])
             .map(
               (post) =>
                 !post.is_deleted && (
@@ -104,7 +143,6 @@ export default function ProfilePage() {
                     key={post.id}
                     post={post}
                     // isLink={true}
-                    refetchPosts={refetchPosts}
                   />
                 )
             )}
@@ -113,6 +151,22 @@ export default function ProfilePage() {
 
       {isFetchingNextPage && (
         <Loader className='animate-spin text-muted-foreground mt-4' />
+      )}
+
+      {noPosts && (
+        <div className='flex flex-col items-center justify-center w-full px-8 md:px-16 mb-4 gap-6'>
+          <Typography
+            variant='p'
+            className=' text-muted-foreground text-center'
+          >
+            No posts yet.
+          </Typography>
+          {fetchedUser?.username === user?.username && (
+            <CreatePostModal>
+              <Button variant='light'>Create Post</Button>
+            </CreatePostModal>
+          )}
+        </div>
       )}
     </MainLayout>
   );

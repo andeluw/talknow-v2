@@ -15,7 +15,7 @@ export default function useGetAllPost() {
     isError,
     refetch: refetchPosts,
   } = useInfiniteQuery({
-    queryKey: ['posts', 'infinite'],
+    queryKey: ['posts'],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await api.get<PaginatedApiResponse<Post[]>>('/post', {
         params: {
@@ -34,9 +34,6 @@ export default function useGetAllPost() {
       return nextPage;
     },
     initialPageParam: 1,
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
   });
 
   return {

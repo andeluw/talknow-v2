@@ -32,16 +32,10 @@ export default function SearchPage() {
     return () => debouncedUpdate.cancel();
   }, [search, debouncedUpdate]);
 
-  const {
-    posts,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    refetchPosts,
-  } = useSearchPost({
-    searchQuery,
-  });
+  const { posts, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useSearchPost({
+      searchQuery,
+    });
 
   useEffect(() => {
     if (
@@ -75,12 +69,7 @@ export default function SearchPage() {
           .flatMap((page) => page.data)
           .filter((post) => !post.is_deleted)
           .map((post) => (
-            <PostItem
-              isLoading={false}
-              key={post.id}
-              post={post}
-              refetchPosts={refetchPosts}
-            />
+            <PostItem isLoading={false} key={post.id} post={post} />
           ))
       )}
 

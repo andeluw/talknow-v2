@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import toast from 'react-hot-toast';
 
@@ -7,14 +7,11 @@ import api from '@/lib/api';
 import { ApiError, ApiResponse } from '@/types/api';
 
 export const useLikePostMutation = ({
-  setLiked,
   username,
-  setTotalLikes,
 }: {
-  setLiked: React.Dispatch<React.SetStateAction<boolean>>;
   username: string | null;
-  setTotalLikes?: React.Dispatch<React.SetStateAction<number>>;
 }) => {
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation<
     AxiosResponse<ApiResponse<null>>,
     AxiosError<ApiError>,
@@ -25,11 +22,6 @@ export const useLikePostMutation = ({
     },
     onSuccess: (_, variables) => {
       // toast.success('Post liked!');
-      setLiked(true);
-      if (setTotalLikes) {
-        setTotalLikes((prev) => prev + 1);
-      }
-
       if (username === null) {
         toast.error('User is not logged in.');
         return;
@@ -63,6 +55,9 @@ export const useLikePostMutation = ({
     },
     onError: (error) => {
       toast.error(error.response?.data.error || 'Something went wrong.');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
   });
 

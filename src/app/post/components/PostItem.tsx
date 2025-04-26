@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Heart, MessageCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -21,7 +22,8 @@ import { useLikePostMutation } from '@/app/post/hooks/useLikeMutation';
 import { useUnlikePostMutation } from '@/app/post/hooks/useUnlikeMutation';
 import ProfileImage from '@/app/profile/components/ProfileImage';
 
-import { Post } from '@/types/entities/post';
+import { PaginatedApiResponse } from '@/types/api';
+import { Post, PostWithReplies } from '@/types/entities/post';
 
 type PostItemProps =
   | {
@@ -29,7 +31,6 @@ type PostItemProps =
       isLoading: false;
       topPost?: boolean;
       isHomepage?: boolean;
-      refetchPosts?: () => void;
       isMainDetail?: boolean;
       isLink?: boolean;
     }
@@ -38,7 +39,6 @@ type PostItemProps =
       post?: undefined;
       topPost?: boolean;
       isHomepage?: boolean;
-      refetchPosts?: () => void;
       isMainDetail?: boolean;
       isLink?: boolean;
     };
@@ -47,7 +47,6 @@ export default function PostItem(props: PostItemProps) {
   const {
     topPost,
     isHomepage = true,
-    refetchPosts,
     isMainDetail = false,
     isLoading,
     isLink = false,
@@ -56,26 +55,21 @@ export default function PostItem(props: PostItemProps) {
   // const post = !isLoading ? props.post! : null;
   const post = !isLoading ? props.post ?? null : null;
 
+  const queryClient = useQueryClient();
+
   const [isReplyModalOpen, setisReplyModalOpen] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [totalLikes, setTotalLikes] = useState(post?.total_likes ?? 0);
 
-  const isFetchingUser = useAuthStore.useIsLoading();
   const isAuthed = useAuthStore.useIsAuthed();
   const user = useAuthStore.useUser();
 
-  const { mutate: likePost, isPending: pendingLike } = useLikePostMutation({
-    setLiked,
+  const { mutate: likePost } = useLikePostMutation({
     username: user?.username || null,
-    setTotalLikes,
   });
 
-  const { mutate: unlikePost, isPending: pendingUnlike } =
-    useUnlikePostMutation({
-      setLiked,
-      username: user?.username || null,
-      setTotalLikes,
-    });
+  const { mutate: unlikePost } = useUnlikePostMutation({
+    username: user?.username || null,
+  });
 
   useEffect(() => {
     if (post && user) {
@@ -88,14 +82,13 @@ export default function PostItem(props: PostItemProps) {
           (entry) => entry.username === user?.username
         );
         setLiked(userEntry?.postIds.includes(post.id) ?? false);
-        setTotalLikes(post.total_likes);
       } catch {
         setLiked(false);
       }
     }
   }, [post, user]);
 
-  if (isLoading || (isAuthed && isFetchingUser)) {
+  if (isLoading) {
     return <PostItemSkeleton isMainDetail={isMainDetail} />;
   }
 
@@ -105,21 +98,179 @@ export default function PostItem(props: PostItemProps) {
 
     if (!post) return;
 
-    if (!liked) {
-      likePost({ post_id: post.id });
-    } else {
-      unlikePost({ post_id: post.id });
+    function updateLike({ like }: { like: boolean }) {
+      setLiked(like);
+      //#region //*=========== Main ===========
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      queryClient.setQueryData(['posts'], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: PaginatedApiResponse<Post[]>) => ({
+            ...page,
+            data: page.data.map((post2: Post) =>
+              post2.id === post?.id
+                ? {
+                    ...post2,
+                    total_likes: like
+                      ? post2.total_likes + 1
+                      : post2.total_likes - 1,
+                  }
+                : post2
+            ),
+          })),
+        };
+      });
+      //#endregion  //*======== Main ===========
+
+      //#region //*=========== Update in Detail Parent ID ===========
+      queryClient.setQueryData(
+        ['posts', 'detail', post?.parent_id],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map(
+              (page: PaginatedApiResponse<PostWithReplies>) => ({
+                ...page,
+                data:
+                  page.data.id === post?.id
+                    ? {
+                        ...page.data,
+                        total_likes: like
+                          ? post.total_likes + 1
+                          : post.total_likes - 1,
+                      }
+                    : {
+                        ...page.data,
+                        replies: page.data.replies?.map((reply: Post) =>
+                          reply.id === post?.id
+                            ? {
+                                ...reply,
+                                total_likes: like
+                                  ? post.total_likes + 1
+                                  : post.total_likes - 1,
+                              }
+                            : reply
+                        ),
+                      },
+              })
+            ),
+          };
+        }
+      );
+      //#endregion  //*======== Update in Detail Parent ID ===========
+
+      //#region //*=========== Update in Detail ID ===========
+      queryClient.setQueryData(
+        ['posts', 'detail', post?.id],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map(
+              (page: PaginatedApiResponse<PostWithReplies>) => ({
+                ...page,
+                data:
+                  page.data.id === post?.id
+                    ? {
+                        ...page.data,
+                        total_likes: like
+                          ? page.data.total_likes + 1
+                          : page.data.total_likes - 1,
+                      }
+                    : {
+                        ...page.data,
+                        replies: page.data.replies?.map((reply: Post) =>
+                          reply.id === post?.id
+                            ? {
+                                ...reply,
+                                total_likes: like
+                                  ? reply.total_likes + 1
+                                  : reply.total_likes - 1,
+                              }
+                            : reply
+                        ),
+                      },
+              })
+            ),
+          };
+        }
+      );
+      //#endregion  //*======== Update in Detail ID ===========
+
+      //#region //*=========== Profile User ===========
+      queryClient.setQueryData(
+        ['posts', 'user', post?.user.username],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: PaginatedApiResponse<Post[]>) => ({
+              ...page,
+              data: page.data.map((post2: Post) =>
+                post2.id === post?.id
+                  ? {
+                      ...post2,
+                      total_likes: like
+                        ? post2.total_likes + 1
+                        : post2.total_likes - 1,
+                    }
+                  : post2
+              ),
+            })),
+          };
+        }
+      );
+      //#endregion  //*======== Profile User ===========
     }
 
-    refetchPosts?.();
-  };
+    function invalidateQueriesLike() {
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['posts', 'detail', post?.parent_id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['posts', 'detail', post?.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['posts', 'user', post?.user?.username],
+      });
+    }
 
-  // const handleReply = (event: React.MouseEvent) => {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   event.nativeEvent.stopImmediatePropagation();
-  //   setisReplyModalOpen(true);
-  // };
+    if (!liked) {
+      likePost(
+        { post_id: post.id },
+        {
+          onSuccess: () => {
+            updateLike({ like: true });
+          },
+          onSettled: () => {
+            invalidateQueriesLike();
+          },
+        }
+      );
+    } else {
+      unlikePost(
+        { post_id: post.id },
+        {
+          onSuccess: () => {
+            updateLike({ like: false });
+          },
+          onSettled: () => {
+            invalidateQueriesLike();
+          },
+        }
+      );
+    }
+  };
 
   const WrapperClasses = cn(
     'flex items-start gap-6 px-5 md:px-8 py-6 py-8 border-[1.5px] border-surface-muted bg-surface-alt w-full justify-between',
@@ -152,13 +303,21 @@ export default function PostItem(props: PostItemProps) {
           isIconFilled={liked}
           disabled={!isAuthed}
           filledIcon='red'
-          className={cn('w-fit px-3 py-1.5 disabled:cursor-default mt-2')}
-          classNames={{ leftIcon: cn(liked && 'text-red-500') }}
+          className={cn(
+            'w-fit px-3 py-1.5 disabled:cursor-default mt-2 transition-all duration-200 ease-in-out transform'
+          )}
+          classNames={{
+            leftIcon: cn(
+              'transition-all duration-100 ease-in-out',
+              liked && 'text-red-500'
+            ),
+          }}
           onClick={handleLike}
-          isLoading={pendingLike || pendingUnlike}
+          // isLoading={pendingLike || pendingUnlike}
         >
-          {totalLikes}
+          {post.total_likes}
         </Button>
+
         {isHomepage && user && (
           <div className='w-full mt-4 md:mt-8'>
             <Typography
@@ -202,7 +361,7 @@ export default function PostItem(props: PostItemProps) {
             @{post.user?.username}
           </UnstyledLink>
           <PostText text={post.text} postId={post.id} />
-          <div className='flex gap-2 mt-4'>
+          <div className='flex gap-2 mt-6'>
             <Button
               variant='outline-2'
               size='sm'
@@ -210,13 +369,21 @@ export default function PostItem(props: PostItemProps) {
               isIconFilled={liked}
               disabled={!isAuthed}
               filledIcon='red'
-              className={cn('w-fit px-3 py-1.5 disabled:cursor-default')}
-              classNames={{ leftIcon: cn(liked && 'text-red-500') }}
+              className={cn(
+                'w-fit px-3 py-1.5 disabled:cursor-default transition-all duration-200 ease-in-out transform'
+              )}
+              classNames={{
+                leftIcon: cn(
+                  'transition-all duration-100 ease-in-out',
+                  liked && 'text-red-500'
+                ),
+              }}
               onClick={handleLike}
-              isLoading={pendingLike || pendingUnlike}
+              // isLoading={pendingLike || pendingUnlike}
             >
-              {totalLikes}
+              {post.total_likes}
             </Button>
+
             <IconLink
               href={`/post/${post.id}`}
               icon={MessageCircle}
@@ -258,6 +425,7 @@ export default function PostItem(props: PostItemProps) {
           username={post.user?.username}
           postId={post.id}
           currentText={post.text}
+          parent_id={post.parent_id}
         />
       </UnstyledLink>
     );
@@ -270,6 +438,7 @@ export default function PostItem(props: PostItemProps) {
         username={post.user?.username}
         postId={post.id}
         currentText={post.text}
+        parent_id={post.parent_id}
       />
       {/* {isReplyModalOpen && (
         <ReplyPostModal
